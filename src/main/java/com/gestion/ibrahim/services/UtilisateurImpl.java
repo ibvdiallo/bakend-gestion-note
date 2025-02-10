@@ -37,11 +37,11 @@ public class UtilisateurImpl  implements UtilisateurService{
         }
         return utilisateurRepository.save(utilisateur);
     }
-	@Override
+	/*@Override
 	public Utilisateur updateUtilisateur(Utilisateur u) {
 		// TODO Auto-generated method stub
 		return utilisateurRepository.save(u);
-	}
+	}*/
 	@Override
 	public void deleteUtilisateur(Utilisateur u) {
 		// TODO Auto-generated method stub
@@ -85,6 +85,17 @@ public class UtilisateurImpl  implements UtilisateurService{
 	        return utilisateurRepository.findByNomContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
 	    }
 		
-	
+	    @Override
+	    public Optional<Utilisateur> updateUtilisateurs(Long userId, Utilisateur updateUtilisateur) {
+	        Optional<Utilisateur> existingUtilsateurOpt = utilisateurRepository.findById(userId);
+	        if (existingUtilsateurOpt.isPresent()) {
+	            Utilisateur existingUtilisateur = existingUtilsateurOpt.get();
+	            existingUtilisateur.setMotDePasse(updateUtilisateur.getMotDePasse());
+	           
+	            utilisateurRepository.save(existingUtilisateur);
+	            return Optional.of(existingUtilisateur);
+	        }
+	        return Optional.empty();
+	    }
 
 }

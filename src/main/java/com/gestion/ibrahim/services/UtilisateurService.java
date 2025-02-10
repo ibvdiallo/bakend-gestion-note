@@ -20,7 +20,8 @@ public interface UtilisateurService {
     
    // Utilisateur findByEmail(String email);
     
-    Utilisateur updateUtilisateur(Utilisateur u);
+    //Utilisateur updateUtilisateur(Utilisateur u);
+    Optional<Utilisateur> updateUtilisateurs(Long userId, Utilisateur updateUtilisateur);
 	
 	void deleteUtilisateur(Utilisateur u);
 	

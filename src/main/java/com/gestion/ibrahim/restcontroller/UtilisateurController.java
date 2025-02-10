@@ -1,10 +1,9 @@
 package com.gestion.ibrahim.restcontroller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gestion.ibrahim.entite.Note;
 import com.gestion.ibrahim.entite.Utilisateur;
 import com.gestion.ibrahim.repos.repoNote;
 import com.gestion.ibrahim.repos.repoUtilisateur;
@@ -13,6 +12,7 @@ import com.gestion.ibrahim.services.UtilisateurService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +36,7 @@ public class UtilisateurController {
 	
 	@Autowired
     private repoNote noteRepository;
-
+	
     @GetMapping
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurService.getAllUtilisateurs();
@@ -46,21 +46,39 @@ public class UtilisateurController {
     public Utilisateur createUtilisateur(@RequestBody Utilisateur utilisateur) {
         return utilisateurService.createUtilisateur(utilisateur);
     }
+    @PutMapping("/modifier/{userId}")
+    public ResponseEntity<Utilisateur> updateUtilisateurs(Long userId, Utilisateur updateUtilisateur) {
+        Optional<Utilisateur> utilisateur = utilisateurService.updateUtilisateurs(userId, updateUtilisateur);
+        return utilisateur.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getUtilisateurById(@PathVariable("id") Long id) {
-        Utilisateur utilisateur = utilisateurService.findById(id); // Supposons que vous avez cette méthode dans votre service
+        try {
+            Utilisateur utilisateur = utilisateurService.findById(id);
 
-        if (utilisateur != null) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", utilisateur.getId());
-            response.put("nom", utilisateur.getNom());
-            response.put("prenom", utilisateur.getPrenom());
-            response.put("email", utilisateur.getEmail());
-            response.put("imagePath", "http://localhost:8082/" + utilisateur.getImagePath()); // URL de l'image
+            if (utilisateur != null) {
+                // Récupérer le nombre de notes
+                Long nombreNotes = noteRepository.countByAuteur_Id(id);
+                
+                
+                Map<String, Object> response = new HashMap<>();
+                response.put("id", utilisateur.getId());
+                response.put("nom", utilisateur.getNom());
+                response.put("prenom", utilisateur.getPrenom());
+                response.put("email", utilisateur.getEmail());
+                response.put("motDePasse", utilisateur.getMotDePasse());
+                response.put("nombreNotes", nombreNotes);
+                response.put("imagePath", utilisateur.getImagePath()); // URL de l'image
+                
 
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Utilisateur non trouvé"));
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Utilisateur non trouvé"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "Erreur serveur"));
         }
     }
 
@@ -75,7 +93,7 @@ public class UtilisateurController {
             response.put("nom", existingUtilisateur.getNom());
             response.put("prenom", existingUtilisateur.getPrenom());
             response.put("email", existingUtilisateur.getEmail());
-            response.put("imagePath", "http://localhost:8082/" + existingUtilisateur.getImagePath()); // Ajoute l'URL de l'image
+            response.put("imagePath", existingUtilisateur.getImagePath()); // Ajoute l'URL de l'image
             
             return ResponseEntity.ok(response);
         }
@@ -129,7 +147,7 @@ public class UtilisateurController {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-    	 String directory = "src/main/resources/static/images/"; // Chemin vers le dossier de stockage des images
+    	 String directory = "/Applications/XAMPP/xamppfiles/htdocs/tesphp/images/"; // Chemin vers le dossier de stockage des images
     	    String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
     	    Path imagePath = Paths.get(directory, fileName);
     	    Files.createDirectories(imagePath.getParent()); // Crée le dossier si nécessaire
@@ -138,7 +156,7 @@ public class UtilisateurController {
     	    // Affiche le chemin absolu pour vérification
     	    System.out.println("Chemin absolu de l'image enregistrée : " + imagePath.toAbsolutePath());
     	    
-    	    return "http://localhost:8082/api/images/" + fileName;
+    	    return "images/" + fileName;
     }
     
     @GetMapping("/{userId}/profil")

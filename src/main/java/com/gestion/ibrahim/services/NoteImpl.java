@@ -80,7 +80,7 @@ public class NoteImpl implements NoteService{
 
 	        PartageNote partage = new PartageNote();
 	        partage.setNote(note);
-            partage.setUtilisateur(utilisateur);
+           // partage.setUtilisateur(utilisateur);
 	        partageNoteRepository.save(partage); // Enregistrer le partage
 	        return true;
 	    }
@@ -96,18 +96,18 @@ public class NoteImpl implements NoteService{
 	            // Créer une nouvelle entrée de partage
 	            PartageNote partageNote = new PartageNote();
 	            partageNote.setNote(note);
-	            partageNote.setUtilisateur(utilisateur);
+	          //  partageNote.setUtilisateur(utilisateur);
 
 	            partageNoteRepository.save(partageNote); // Sauvegarder le partage de la note
 	        } else {
 	            throw new RuntimeException("Note ou utilisateur introuvable");
 	        }
 	    }
-	    public List<Note> getNotesPartageesWithUser(Long utilisateurId) {
+	    /*public List<Note> getNotesPartageesWithUser(Long utilisateurId) {
 	        List<PartageNote> partages = partageNoteRepository.findByUtilisateurId(utilisateurId);
 	        // Extraire les notes partagées
 	        return partages.stream().map(PartageNote::getNote).toList();
-	    }
+	    }*/
 		@Override
 		public Note incrementerTelechargement(Long noteId) {
 			// TODO Auto-generated method stub
@@ -147,6 +147,30 @@ public class NoteImpl implements NoteService{
 			return noteRepository.findByAuteurId(userId); 
 		    
 		}
+		
+		
+		@Override
+	    public Optional<Note> updateNote(Long noteId, Note updatedNote) {
+	        Optional<Note> existingNoteOpt = noteRepository.findById(noteId);
+	        if (existingNoteOpt.isPresent()) {
+	            Note existingNote = existingNoteOpt.get();
+	            existingNote.setTitre(updatedNote.getTitre());
+	            existingNote.setCours(updatedNote.getCours());
+	            existingNote.setContenu(updatedNote.getContenu());
+	            noteRepository.save(existingNote);
+	            return Optional.of(existingNote);
+	        }
+	        return Optional.empty();
+	    }
+
+	    @Override
+	    public boolean deleteNote(Long noteId) {
+	        if (noteRepository.existsById(noteId)) {
+	            noteRepository.deleteById(noteId);
+	            return true;
+	        }
+	        return false;
+	    }
 		
 
 }

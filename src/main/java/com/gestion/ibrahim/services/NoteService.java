@@ -1,7 +1,7 @@
 package com.gestion.ibrahim.services;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import com.gestion.ibrahim.entite.Note;
 import com.gestion.ibrahim.entite.Utilisateur;
@@ -27,7 +27,14 @@ public interface NoteService {
     List<Note> getNotesRecues(Long userId);
     
     
-	List<Note> getNotesPartageesWithUser(Long userId);
+	//List<Note> getNotesPartageesWithUser(Long userId);
+
+	
+
+	    Optional<Note> updateNote(Long noteId, Note updatedNote);
+	    boolean deleteNote(Long noteId);
+	
+
     
     
 }

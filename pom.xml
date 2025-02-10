@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.5</version>
+		<version>3.3.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.gestion</groupId>
@@ -49,8 +49,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+    <artifactId>lombok</artifactId> <!-- Utilise la version la plus récente -->
+    <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -86,7 +86,7 @@
 
 	<build>
 		<plugins>
-			<plugin>
+			<!--<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
@@ -98,6 +98,21 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			-->
+			 <plugin>
+			        <groupId>org.apache.maven.plugins</groupId>
+			        <artifactId>maven-compiler-plugin</artifactId>
+			        <version>3.8.1</version>
+			        <configuration>
+			            <source>17</source> <!-- Assure-toi que la version de Java est bien 17 -->
+			            <target>17</target>
+			        </configuration>
+    		</plugin>
+    		 <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>2.6.1</version> <!-- Remplace par la version appropriée -->
+        </plugin>
 		</plugins>
 	</build>
 

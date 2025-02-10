@@ -62,5 +62,26 @@ public class CommentaireController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur lors du partage de la note");
         }
     }
+    
+    @DeleteMapping("/supprimer/{id}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long id) {
+        try {
+            commentaireService.deleteComment(id);
+            return ResponseEntity.ok("Commentaire supprimé avec succès");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur lors de la suppression du commentaire");
+        }
+    }
+
+    // Endpoint to update a comment
+    @PutMapping("/modifier/{id}")
+    public ResponseEntity<Commentaire> updateComment(@PathVariable Long id, @RequestBody String newContent) {
+        try {
+            Commentaire updatedCommentaire = commentaireService.updateComment(id, newContent);
+            return ResponseEntity.ok(updatedCommentaire);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 
 }

@@ -76,4 +76,18 @@ public class CommentaireImpl implements CommentaireService{
         }
         return false;
     }
+    
+    
+    @Override
+    public void deleteComment(Long commentId) {
+        commentaireRepository.deleteById(commentId);
+    }
+
+    @Override
+    public Commentaire updateComment(Long commentId, String newContent) {
+        Commentaire commentaire = commentaireRepository.findById(commentId)
+            .orElseThrow(() -> new IllegalArgumentException("Comment not found with ID: " + commentId));
+        commentaire.setContenu(newContent);
+        return commentaireRepository.save(commentaire);
+    }
 }

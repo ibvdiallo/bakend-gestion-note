@@ -2,6 +2,7 @@ package com.gestion.ibrahim.restcontroller;
 
 import java.io.File;
 
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
@@ -16,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import com.gestion.ibrahim.entite.Note;
+import com.gestion.ibrahim.entite.PartageNote;
 import com.gestion.ibrahim.entite.Utilisateur;
 import com.gestion.ibrahim.repos.repoNote;
+import com.gestion.ibrahim.repos.repoPartage;
 import com.gestion.ibrahim.repos.repoUtilisateur;
 import com.gestion.ibrahim.services.NoteService;
 import com.gestion.ibrahim.services.PartageService;
@@ -50,10 +53,11 @@ public class NoteController {
     @Autowired
     private PartageService partageService;
     @Autowired
-    private UtilisateurService utilisateurService;
+    private UtilisateurService  utilisateurService;
     @Autowired
     private repoUtilisateur utilisateurRepository;
-
+    @Autowired
+    private  repoPartage repoPartage;
     
     @GetMapping
     public List<Note> getAllNotes() {
@@ -187,7 +191,7 @@ public class NoteController {
 
                 // Ajout du titre
                 Font titleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
-                Paragraph title = new Paragraph(note.getTitre(), titleFont);
+                Paragraph title = new Paragraph("Titre : " + note.getTitre(), titleFont);
                 title.setAlignment(Element.ALIGN_CENTER);
                 document.add(title);
 
@@ -195,7 +199,7 @@ public class NoteController {
 
                 // Ajout de la description
                 Font descFont = new Font(Font.FontFamily.HELVETICA, 12, Font.ITALIC);
-                Paragraph description = new Paragraph(note.getCours(), descFont);
+                Paragraph description = new Paragraph("Cours : " + note.getCours(), descFont);
                 description.setAlignment(Element.ALIGN_LEFT);
                 document.add(description);
 
@@ -254,18 +258,28 @@ public class NoteController {
         return ResponseEntity.badRequest().body("Erreur lors du partage de la note.");
     */
     
-    @PostMapping("/{noteId}/partager/{userId}")
-    public void shareNoteWithUser(@PathVariable Long noteId, @PathVariable Long userId) {
-        noteService.shareNoteWithUser(noteId, userId);
-    }
+    //@PostMapping("/{noteId}/partager/{userId}")
+    //public void shareNoteWithUser(@PathVariable Long noteId, @PathVariable Long userId) {
+     //   noteService.shareNoteWithUser(noteId, userId);
+    //}
     
   
-    @GetMapping("/{userId}/partagees")
-    public List<Note> getNotesPartagees(@PathVariable Long userId) {
-        return noteService.getNotesPartageesWithUser(userId);
-    }
+    //@GetMapping("/{userId}/partagees")
+    //public List<Note> getNotesPartagees(@PathVariable Long userId) {
+     //   return noteService.getNotesPartageesWithUser(userId);
+    //}
  
-    
+    //@GetMapping("/{noteId}/partages")
+    //public List<Utilisateur> getPartagesByNote(@PathVariable Long noteId) {
+      //  List<PartageNote> partages = repoPartage.findByNoteId(noteId);
+        
+        // Extraire les utilisateurs ayant partagé la note
+       // List<Utilisateur> utilisateurs = partages.stream()
+              //  .map(partage -> partage.getUtilisateur())  // Récupérer l'utilisateur de chaque partage
+                //.collect(Collectors.toList());
+       // return utilisateurs;
+    //}
+
     @GetMapping("/utilisateur/{userId}")
     public ResponseEntity<List<Note>> getNotesByUserId(@PathVariable Long userId) {
     	 // Récupérer toutes les notes de l'utilisateurList<Note> notesRecues = noteService.getNotesRecues(userId);
@@ -277,5 +291,47 @@ public class NoteController {
         
         // Si des notes sont trouvées, les renvoyer avec un statut 200 OK
         return ResponseEntity.ok(notesRecues);
+    }
+    
+    
+    
+    
+    
+ 
+
+    @PostMapping("/{noteId}/partageermoi/{destinataireId}")
+    public ResponseEntity<?> partagerNote(
+            @PathVariable Long noteId,
+            @PathVariable Long destinataireId,
+            @RequestParam Long partageurId) {
+        try {
+            partageService.partagerNote(noteId, destinataireId, partageurId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{userId}/partagees")
+    public ResponseEntity<List<Map<String, Object>>> getNotesPartagees(@PathVariable Long userId) {
+        try {
+            List<Map<String, Object>> notes = partageService.getNotesPartagees(userId);
+            return ResponseEntity.ok(notes);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+    
+
+    // ✅ 3. Modifier une note
+    @PutMapping("/modifier/{noteId}")
+    public ResponseEntity<Note> updateNote(@PathVariable Long noteId, @RequestBody Note updatedNote) {
+        Optional<Note> note = noteService.updateNote(noteId, updatedNote);
+        return note.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+ // ✅ 4. Supprimer une note
+    @DeleteMapping("/supprimer/{noteId}")
+    public ResponseEntity<Void> deleteNote(@PathVariable Long noteId) {
+        return noteService.deleteNote(noteId) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

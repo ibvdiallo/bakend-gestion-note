@@ -21,4 +21,6 @@ public interface repoNote extends JpaRepository<Note, Long> {
     
     long countByAuteurId(Long auteurId);
     
+    Long countByAuteur_Id(Long id);
+    
 }

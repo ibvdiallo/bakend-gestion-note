@@ -17,4 +17,8 @@ public interface CommentaireService {
     // Récupérer tous les commentaires
     List<Commentaire> getAllCommentaires();
     
+    void deleteComment(Long commentId);
+
+    Commentaire updateComment(Long commentId, String newContent);
+    
 }

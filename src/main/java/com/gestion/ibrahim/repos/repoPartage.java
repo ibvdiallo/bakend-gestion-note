@@ -8,6 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.gestion.ibrahim.entite.PartageNote;
 
 public interface repoPartage extends JpaRepository<PartageNote, Long>  {
-	List<PartageNote> findByUtilisateurId(Long utilisateurId);
+	//List<PartageNote> findByUtilisateurId(Long utilisateurId);
+
+	List<PartageNote> findByNoteId(Long noteId);
+	
+	List<PartageNote> findByDestinataire_Id(Long destinataireId);
+	
 	
 }
