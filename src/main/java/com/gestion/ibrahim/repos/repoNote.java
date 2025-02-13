@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.gestion.ibrahim.entite.Note;
 
+
 @CrossOrigin
 public interface repoNote extends JpaRepository<Note, Long> {
     List<Note> findByCours(String cours); 
