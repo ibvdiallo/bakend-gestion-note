@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "https://notecours.web.app")
 @RequestMapping("/api/commentaires")
 public class CommentaireController {
 

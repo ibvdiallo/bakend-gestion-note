@@ -26,7 +26,7 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/utilisateurs")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://notecours.web.app")
 public class UtilisateurController {
 	@Autowired
     private UtilisateurService utilisateurService;

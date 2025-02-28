@@ -12,6 +12,7 @@ import com.gestion.ibrahim.entite.Utilisateur;
 import com.gestion.ibrahim.services.UtilisateurService;
 
 @RestController
+@CrossOrigin(origins = "https://notecours.web.app")
 @RequestMapping("/api")
 public class AuthController {
 

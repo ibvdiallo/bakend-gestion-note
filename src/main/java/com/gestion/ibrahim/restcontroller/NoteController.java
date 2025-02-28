@@ -42,8 +42,9 @@ import org.springframework.http.ResponseEntity;
 import java.io.ByteArrayOutputStream;
 
 @RestController
+@CrossOrigin(origins = "https://notecours.web.app")
 @RequestMapping("/api/notes")
-@CrossOrigin(origins = "http://localhost:4200") // Autoriser les requêtes depuis Angular
+//@CrossOrigin(origins = "http://localhost:4200") // Autoriser les requêtes depuis Angular
 public class NoteController {
 
     @Autowired
